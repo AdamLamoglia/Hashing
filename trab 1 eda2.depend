@@ -1,0 +1,25 @@
+# depslib dependency file v1.0
+1511844644 source:c:\users\jmminfo\desktop\trab 1 eda2\main.cpp
+	"hashDuplo.h"
+	"hashEncadeado.h"
+
+1511843976 c:\users\jmminfo\desktop\trab 1 eda2\include\hashduplo.h
+	<iostream>
+	<stdio.h>
+	<math.h>
+	<cstdlib>
+	<iomanip>
+
+1511843975 c:\users\jmminfo\desktop\trab 1 eda2\include\hashencadeado.h
+	<iostream>
+	<stdio.h>
+	<math.h>
+	<cstdlib>
+	<iomanip>
+
+1511844038 source:c:\users\jmminfo\desktop\trab 1 eda2\src\hashduplo.cpp
+	"hashDuplo.h"
+
+1511879392 source:c:\users\jmminfo\desktop\trab 1 eda2\src\hashencadeado.cpp
+	"hashEncadeado.h"
+
