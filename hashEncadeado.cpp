@@ -32,10 +32,8 @@ int HashEncadeado::h2(int chave){
 }
 
 void HashEncadeado::insereRegistro(){
-    int deslocamento,posicao,posicaoFinal,posicaoAnterior,contador = 1;
-    registro abertura,escrita,leitura,novaLeitura,anterior,aux;
-
-    posicao = -1;
+    int deslocamento,posicaoAnterior;
+    registro abertura,escrita,leitura,novaLeitura;
 
     cin >> escrita.chave;
     cin.ignore();
@@ -50,6 +48,7 @@ void HashEncadeado::insereRegistro(){
     arquivo = fopen("teste.bin","rb+");
 
     if(arquivo == NULL){
+        cout << "entrou" << endl;
         escrita.proximo = -1;
 
         fclose(arquivo);
@@ -74,8 +73,6 @@ void HashEncadeado::insereRegistro(){
     //existem registros dentro do arquivo
     else{
 
-        //arquivo = fopen("teste.bin","r+");
-
         fseek(arquivo,h1(escrita.chave)*sizeof(registro),SEEK_SET);
 
         fread(&leitura,sizeof(registro),1,arquivo);
@@ -98,6 +95,7 @@ void HashEncadeado::insereRegistro(){
         else if(leitura.chave == escrita.chave){
             cout << "chave ja existente: " << leitura.chave << endl;
             fclose(arquivo);
+            return;
         }
         //existe um registro no endereco original
         else{
@@ -111,6 +109,7 @@ void HashEncadeado::insereRegistro(){
             fseek(arquivo,deslocamento*sizeof(registro),SEEK_SET);
             fread(&novaLeitura,sizeof(registro),1,arquivo);
 
+
             //sobe no arquivo ate encontrar um endereco livre
             while(novaLeitura.chave != -1){
                 deslocamento--;
@@ -123,26 +122,21 @@ void HashEncadeado::insereRegistro(){
 
                 escrita.proximo = -1;
 
-                cout << "deslocamento: " << deslocamento << endl;
-                cout << "escrita.chave: " << escrita.chave << endl;
-                cout << "escrita.nome: " << escrita.nome << endl;
-                cout << "escrita.idade: " << escrita.idade << endl;
                 fclose(arquivo);
 
                 arquivo = fopen("teste.bin","rb+");
-
-                //poe registro no fim da lista
-                fseek(arquivo,deslocamento*sizeof(registro),SEEK_SET);
-                fwrite(&escrita,sizeof(registro),1,arquivo);
 
 
                 fseek(arquivo,h1(leitura.chave)*sizeof(registro),SEEK_SET);
                 fread(&leitura,sizeof(registro),1,arquivo);
 
-                posicaoAnterior = (ftell(arquivo)-1)/sizeof(registro);
+                if(leitura.chave == escrita.chave){
+                    cout << "chave ja existente: " << leitura.chave << endl;
+                    fclose(arquivo);
+                    return;
+                }
 
-                cout << "leitura.chave " << leitura.chave << endl;
-                cout << "leitura.prox " << leitura.proximo << endl;
+                posicaoAnterior = (ftell(arquivo)-1)/sizeof(registro);
 
 
                 //procura o elemento do fim da lista antiga, para atualizar o proximo
@@ -151,18 +145,23 @@ void HashEncadeado::insereRegistro(){
                     fseek(arquivo,leitura.proximo*sizeof(registro),SEEK_SET);
                     fread(&leitura,sizeof(registro),1,arquivo);
 
-                    cout << "leitura.chave " << leitura.chave << endl;
-                    cout << "leitura.prox " << leitura.proximo << endl;
+                    if(leitura.chave == escrita.chave){
+                        cout << "chave ja existente: " << leitura.chave << endl;
+                        fclose(arquivo);
+                        return;
+                    }
+
                 }
 
                 leitura.proximo = deslocamento;
 
-                cout << posicaoAnterior << endl;
-                cout << deslocamento << endl;
-
                 fseek(arquivo,posicaoAnterior*sizeof(registro),SEEK_SET);
 
                 fwrite(&leitura,sizeof(registro),1,arquivo);
+
+                //poe registro no fim da lista
+                fseek(arquivo,deslocamento*sizeof(registro),SEEK_SET);
+                fwrite(&escrita,sizeof(registro),1,arquivo);
 
 
             }
@@ -202,9 +201,6 @@ void HashEncadeado::insereRegistro(){
                     posicaoAnterior = (ftell(arquivo)-1)/sizeof(registro);
                 }
 
-                cout << posicaoAnterior << endl;
-                cout << deslocamento << endl;
-
                 fseek(arquivo,posicaoAnterior*sizeof(registro),SEEK_SET);
 
                 fread(&leitura,sizeof(registro),1,arquivo);
@@ -228,7 +224,7 @@ void HashEncadeado::consultaRegistro(){
 
     cin >> chave;
 
-    arquivo = fopen("teste.bin","r+");
+    arquivo = fopen("teste.bin","rb+");
 
     fseek(arquivo,h1(chave)*sizeof(registro),SEEK_SET);
 
@@ -237,7 +233,7 @@ void HashEncadeado::consultaRegistro(){
 
     if(leitura.chave == chave){
 
-        cout << "chave: " << leitura.chave << endl;
+        cout << "chave: " << chave << endl;
         cout << leitura.nome << endl;
         cout << leitura.idade << endl;
 
@@ -245,18 +241,16 @@ void HashEncadeado::consultaRegistro(){
     else{
 
         while(leitura.proximo != -1){
-
                 fseek(arquivo,leitura.proximo*sizeof(registro),SEEK_SET);
 
                 fread(&leitura,sizeof(registro),1,arquivo);
 
                 if(leitura.chave == chave)
                     break;
-
         }
 
         if(leitura.chave == chave){
-            cout << "chave: " << leitura.chave << endl;
+            cout << "chave: " << chave << endl;
             cout << leitura.nome << endl;
             cout << leitura.idade << endl;
         }
@@ -272,7 +266,7 @@ void HashEncadeado::consultaRegistro(){
 void HashEncadeado::imprimeArquivo(){
     registro leitura;
 
-    arquivo = fopen("teste.bin","r+");
+    arquivo = fopen("teste.bin","rb+");
 
     for(int i = 0; i < getTamanho(); i++){
         fseek(arquivo,i*sizeof(registro),SEEK_SET);
@@ -301,7 +295,7 @@ void HashEncadeado::calcularMedia(){
     double quantidadeDeRegistros = 0;
     setQuantidadeDeAcessos(0);
 
-    arquivo = fopen("teste.bin","r+");
+    arquivo = fopen("teste.bin","rb+");
 
     for(int i = 0; i < getTamanho(); i++){
 
@@ -339,12 +333,12 @@ void HashEncadeado::calcularMedia(){
 }
 
 void HashEncadeado::removeRegistro(){
-    int chave,proximaPosicao,posicaoAtual,posicaoAnterior;
-    registro leitura, escrita, anterior;
+    int chave,posicaoAtual,posicaoAnterior;
+    registro leitura, escrita;
 
     cin >> chave;
 
-    arquivo = fopen("teste.bin","r+");
+    arquivo = fopen("teste.bin","rb+");
 
     fseek(arquivo,h1(chave)*sizeof(registro),SEEK_SET);
 
@@ -396,6 +390,7 @@ void HashEncadeado::removeRegistro(){
         fread(&leitura,sizeof(registro),1,arquivo);
 
         posicaoAtual = (ftell(arquivo)-1)/sizeof(registro);
+        posicaoAnterior = posicaoAtual;
 
         //enquanto nao encontrar o registro, percorre a lista
         while(leitura.chave != chave && leitura.proximo != -1){
@@ -414,15 +409,9 @@ void HashEncadeado::removeRegistro(){
             if(posicaoAnterior == getTamanho())
                 posicaoAnterior = getTamanho() - 1;
 
-            //cout << posicaoAtual << endl;
-            //cout << posicaoAnterior << endl;
-            //cout << leitura.proximo << endl;
         }
 
         if(leitura.chave == chave){
-            cout << posicaoAtual << endl;
-            cout << posicaoAnterior << endl;
-            cout << leitura.proximo << endl;
 
             //apaga registro
             leitura.chave = -1;
@@ -446,54 +435,6 @@ void HashEncadeado::removeRegistro(){
             cout << "chave nao encontrada: " << chave << endl;
         }
 
-
-        /*while(leitura.chave != chave && leitura.proximo != -1){
-
-            fseek(arquivo,(-1)*sizeof(registro),SEEK_CUR);
-
-            posicaoAtual = (ftell(arquivo)+1)/sizeof(registro);
-
-            anterior = leitura;
-
-            //desloca ponteiro para proximo elemento da lista
-            fseek(arquivo,leitura.proximo*sizeof(registro),SEEK_SET);
-
-            //pega informacao do registro
-            fread(&leitura, sizeof(registro),1,arquivo);
-
-            proximaPosicao = leitura.proximo;
-
-        }*/
-        /*if(leitura.chave == chave){
-            leitura.proximo = ftell(arquivo)/sizeof(registro);
-
-            //cout << proximaPosicao << endl;
-            //cout << leitura.proximo << endl;
-
-            leitura.chave = -1;
-
-            fclose(arquivo);
-
-            arquivo = fopen("teste.bin","r+");
-
-            cout << "anterior chave: " << anterior.chave << endl;
-            cout << "leitura chave: " << leitura.chave << endl;
-
-            //altera ponteiro do anterior para apontar para o proximo
-            fseek(arquivo,posicaoAtual*sizeof(registro),SEEK_SET);
-
-            anterior.proximo = proximaPosicao;
-
-            fwrite(&anterior,sizeof(registro),1,arquivo);
-
-            //remove elemento desejado
-            fseek(arquivo,leitura.proximo*sizeof(registro),SEEK_SET);
-
-            fwrite(&leitura,sizeof(registro),1,arquivo);
-        }*/
-        /*else{
-            cout << "chave nao encontrada: " << chave << endl;
-        }*/
     }
 
     fclose(arquivo);

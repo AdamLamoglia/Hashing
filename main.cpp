@@ -15,7 +15,6 @@ int TAMANHO_ARQUIVO = 11;
 
 int main(){
     char tipo,comando;
-    FILE *arquivo = fopen("teste.bin","r+");
 
     cin >> tipo;
 

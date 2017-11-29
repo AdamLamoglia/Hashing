@@ -41,9 +41,10 @@ void HashDuplo::insereRegistro(){
 
     cin >> escrita.idade;
 
+
     abertura.chave = -1;
 
-    arquivo = fopen("teste.bin","r+");
+    arquivo = fopen("teste.bin","rb+");
 
     //se o arquivo nao contem nenhum registro, abre getTamanho() posicoes nele
     if(arquivo == NULL){
@@ -70,7 +71,7 @@ void HashDuplo::insereRegistro(){
     //existem registros no arquivo
     else{
 
-        arquivo = fopen("teste.bin","r+");
+        arquivo = fopen("teste.bin","rb+");
 
         fseek(arquivo,h1(escrita.chave)*sizeof(registro),SEEK_SET);
 
@@ -166,7 +167,7 @@ void HashDuplo::consultaRegistro(){
 
     cin >> chave;
 
-    arquivo = fopen("teste.bin","r+");
+    arquivo = fopen("teste.bin","rb+");
 
     fseek(arquivo,h1(chave)*sizeof(registro),SEEK_SET);
 
@@ -217,7 +218,7 @@ void HashDuplo::consultaRegistro(){
 void HashDuplo::imprimeArquivo(){
     registro leitura;
 
-    arquivo = fopen("teste.bin","r+");
+    arquivo = fopen("teste.bin","rb+");
 
     for(int i = 0; i < getTamanho(); i++){
         fseek(arquivo,i*sizeof(registro),SEEK_SET);
@@ -240,7 +241,7 @@ void HashDuplo::calcularMedia(){
     double quantidadeDeRegistros = 0;
     setQuantidadeDeAcessos(0);
 
-    arquivo = fopen("teste.bin","r+");
+    arquivo = fopen("teste.bin","rb+");
 
     //percorre o arquivo para calcular a quantidade de acessos de consulta cada registro
     for(int i = 0; i < getTamanho(); i++){
@@ -294,7 +295,7 @@ void HashDuplo::removeRegistro(){
 
     cin >> chave;
 
-    arquivo = fopen("teste.bin","r+");
+    arquivo = fopen("teste.bin","rb+");
 
     fseek(arquivo,h1(chave)*sizeof(registro),SEEK_SET);
 
