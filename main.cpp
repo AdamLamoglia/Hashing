@@ -1,3 +1,10 @@
+//Aluno: Adam Lamoglia Rammensee
+//Matricula: 216124611
+//Curso: Ciencia da Computacao
+//Professor: Flavio Assis
+//Trabalho: Manipulacao de arquivos em hash duplo e encadeado
+
+
 #include "hashDuplo.h"
 #include "hashEncadeado.h"
 

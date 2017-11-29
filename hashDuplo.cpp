@@ -34,10 +34,12 @@ int HashDuplo::h2(int chave){
 void HashDuplo::insereRegistro(){
     registro abertura,escrita,leitura;
 
-    cin >> escrita.chave >> escrita.idade;
+    cin >> escrita.chave;
     cin.ignore();
 
     cin.getline(escrita.nome,20);
+
+    cin >> escrita.idade;
 
     abertura.chave = -1;
 
